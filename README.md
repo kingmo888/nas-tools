@@ -7,6 +7,10 @@
 [![Docker pulls](https://img.shields.io/docker/pulls/hsuyelin/nas-tools?style=plastic)](https://hub.docker.com/r/hsuyelin/nas-tools)
 [![Platform](https://img.shields.io/badge/platform-amd64/arm64-pink?style=plastic)](https://hub.docker.com/r/hsuyelin/nas-tools)
 
+## 声明
+
+本项目与原项目保持一致，主要为了解决作者docker hub更新不包含github最新修复代码的情况。
+
 ## 维护声明
 
 1）本维护项目为[nas-tools](https://github.com/NAStool/nas-tools)维护项目非官方项目；  
