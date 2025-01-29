@@ -27,6 +27,7 @@ class NexusPhpSiteUserInfo(_ISiteUserInfo):
         html_text = self._prepare_html_text(html_text)
 
         user_detail = re.search(r"userdetails.php\?id=(\d+)", html_text)
+
         if user_detail and user_detail.group().strip():
             self._user_detail_page = user_detail.group().strip().lstrip('/')
             self.userid = user_detail.group(1)
@@ -99,7 +100,7 @@ class NexusPhpSiteUserInfo(_ISiteUserInfo):
             download_match = re.search(r'<span class="font-bold">下[载載]量?[:：]</span><span>([\d.]+ [A-Za-z]+)</span>', html_text)
         self.download = StringUtils.num_filesize(download_match.group(1).strip()) if download_match else 0
 
-        ratio_match = re.search(r"分享率[:：_<>/a-zA-Z-=\"'\s#;]+([\d,.\s]+)", html_text)
+        ratio_match = re.search(r"分享率[:：_<>/a-zA-Z-=\"'\s#;]+[^>]+>[:：=\"'\s]?([\d,.\s]+)", html_text)
         # 计算分享率
         calc_ratio = 0.0 if self.download <= 0.0 else round(self.upload / self.download, 3)
         # 优先使用页面上的分享率
@@ -272,7 +273,7 @@ class NexusPhpSiteUserInfo(_ISiteUserInfo):
             download_match = re.search(r'<span class="font-bold">下[载載]量?[:：]</span><span>([\d.]+ [A-Za-z]+)</span>', html_text)
         self.download = StringUtils.num_filesize(download_match.group(1).strip()) if download_match else 0
 
-        ratio_match = re.search(r"分享率[:：_<>/a-zA-Z-=\"'\s#;]+([\d,.\s]+)", html_text)
+        ratio_match = re.search(r"分享率[:：_<>/a-zA-Z-=\"'\s#;]+[^>]+>[:：=\"'\s]?([\d,.\s]+)", html_text)
         # 计算分享率
         calc_ratio = 0.0 if self.download <= 0.0 else round(self.upload / self.download, 3)
         # 优先使用页面上的分享率
@@ -357,6 +358,12 @@ class NexusPhpSiteUserInfo(_ISiteUserInfo):
     def __get_user_level(self, html):
         # 等级 获取同一行等级数据，图片格式等级，取title信息，否则取文本信息
         user_levels_text = html.xpath('//tr/td[text()="等級" or text()="等级" or *[text()="等级"]]/'
+                                      'following-sibling::td[1]/img[1]/@title')
+        if user_levels_text:
+            self.user_level = user_levels_text[0].strip()
+            return
+
+        user_levels_text = html.xpath('//tr/td[contains(text(), "等级")]/'
                                       'following-sibling::td[1]/img[1]/@title')
         if user_levels_text:
             self.user_level = user_levels_text[0].strip()
